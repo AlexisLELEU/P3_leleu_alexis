@@ -4,6 +4,11 @@ from pygame.locals import *
 
 class Labyrinthe:
     def __init__(self, file):
+        self.screen = pygame.display.set_mode((640, 480))
+        self.grass = pygame.image.load('grass.png').convert()
+        self.wall = pygame.image.load('wall.png').convert()
+        self.gardienEnd = pygame.image.load('Gardien.png').convert()
+        self.perso = pygame.image.load('MacGyver.png').convert()
         self.file = file
         self.dic = {}
         self.mcgyver = ''
@@ -53,17 +58,13 @@ class Labyrinthe:
         for i in self.dic:
             test =  tuple(j*20 for j in i)
             if self.dic[i] == 'chemin' or self.dic[i] == 'depart' or self.dic[i] == 'arrivee':
-                grass = pygame.image.load('grass.png').convert()
-                fenetre.blit(grass, test)
+                self.screen.blit(self.grass, test)
                 if self.dic[i] == 'depart':
-                    perso = pygame.image.load('MacGyver.png').convert()
-                    fenetre.blit(perso, test)
+                    self.screen.blit(self.perso, test)
                 if self.dic[i] == 'arrivee':
-                    gardien = pygame.image.load('Gardien.png').convert()
-                    fenetre.blit(gardien, test)
+                    self.screen.blit(self.gardienEnd, test)
             if self.dic[i] == 'mur':
-                grass = pygame.image.load('wall.png').convert()
-                fenetre.blit(grass, test)
+                self.screen.blit(self.wall, test)
 
     #
     # Cette méthode répartit aléatoirement, dans le labyrinthe, les objects en faisant attention
@@ -96,10 +97,10 @@ class Labyrinthe:
     # methode 'manager' pour test et attribuer les nouvelles coordonnées
     #
     def can_move(self, new_coo):
+        test = tuple(j*20 for j in new_coo)
         if(new_coo in self.dic and (self.dic[new_coo] == 'chemin' or self.dic[new_coo] == 'arrivee')):
             self.mcgyver.position = new_coo
-            perso = pygame.image.load('MacGyver.png').convert()
-            fenetre.blit(perso, tuple(j*20 for j in new_coo))
+            self.screen.blit(self.perso, test)
             if(self.mcgyver.position in self.objets):
                 self.objetsCount += 1
         print(self.objetsCount)
@@ -136,8 +137,6 @@ class Objet:
 if "__main__" == __name__:
 
     pygame.init()
-    fenetre = pygame.display.set_mode((640, 480))
-
 
     direction = ['z', 'q', 's', 'd']
     labyrinth = Labyrinthe('labyrinthe.txt')
@@ -162,6 +161,8 @@ if "__main__" == __name__:
             new_coo = labyrinth.find_new_coo(interaction)
             labyrinth.can_move(new_coo)
             interaction = input('Entrez un déplacement: ')
+
+            pygame.display.update()
 
         else:
             interaction = input('Position non valdie: ')
