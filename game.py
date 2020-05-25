@@ -87,13 +87,13 @@ class Labyrinthe:
     # trouve les nouvelles coordonnées en fonction d'un déplacement (z, q, s, d)
     #
     def find_new_coo(self, interaction):
-        if interaction == '273':
+        if interaction == 'LEFT':
             newPosition = (self.mcgyver.position[0] - 1, self.mcgyver.position[1])
-        if interaction == '274':
+        if interaction == 'RIGHT':
             newPosition = (self.mcgyver.position[0] + 1, self.mcgyver.position[1])
-        if interaction == '275':
+        if interaction == 'DOWN':
             newPosition = (self.mcgyver.position[0], self.mcgyver.position[1] + 1)
-        if interaction == '276':
+        if interaction == 'UP':
             newPosition = (self.mcgyver.position[0], self.mcgyver.position[1] - 1)
 
         return newPosition
@@ -101,11 +101,12 @@ class Labyrinthe:
     # methode 'manager' pour test et attribuer les nouvelles coordonnées
     #
     def can_move(self, new_coo):
-        test =  tuple(j*20 for j in new_coo)
+        newFormattedCoo =  tuple(j*20 for j in new_coo)
+        lastCoo =  tuple(j*20 for j in self.mcgyver.position)
         if(new_coo in self.dic and (self.dic[new_coo] == 'chemin' or self.dic[new_coo] == 'arrivee')):
             self.mcgyver.position = new_coo
-
-            self.screen.blit(self.perso, test)
+            self.screen.blit(self.perso, newFormattedCoo)
+            self.screen.blit(self.grass, lastCoo)
             if(self.mcgyver.position in self.objects):
                 self.objectsCount += 1
         print(self.objectsCount)
@@ -148,34 +149,49 @@ if "__main__" == __name__:
 
     labyrinth.objet_repartition()
 
-    labyrinth.showLabyrinthe
-
-    pygame.display.flip()
 
     boucle = True
+    start = False
 
+    
     while boucle:
 
         for event in pygame.event.get():
-            if(event.type == pygame.KEYDOWN): 
-                print('event :', event.key)
-                if(event.key == '273' or event.key == '274' or event.key == '275' or event.key == '276'):
+            if(event.type == pygame.KEYDOWN):
+                    if(event.key == pygame.K_s):
+                        start = True
 
-                    if labyrinth.finish_the_game():
+        while start:
+            labyrinth.showLabyrinthe
+
+            pygame.display.flip()
+
+            for event in pygame.event.get():
+                if(event.type == pygame.KEYDOWN):
+                    if(event.key == pygame.K_UP or event.key == pygame.K_DOWN or event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT):
+
+                        if labyrinth.finish_the_game():
+                            start = False
+
+                        if (event.key == pygame.K_UP):
+                            new_coo = labyrinth.find_new_coo('UP')
+                        if (event.key == pygame.K_DOWN):
+                            new_coo = labyrinth.find_new_coo('DOWN')
+                        if (event.key == pygame.K_RIGHT):
+                            new_coo = labyrinth.find_new_coo('RIGHT')
+                        if (event.key == pygame.K_LEFT):
+                            new_coo = labyrinth.find_new_coo('LEFT')
+                    
+                        labyrinth.can_move(new_coo)
+
+                        labyrinth.showLabyrinthe
+                        pygame.display.flip()
+
+                    elif (event.key == pygame.K_ESCAPE):
                         boucle = False
+                        start = False
+                        break
 
-                    new_coo = labyrinth.find_new_coo(event.key)
-                    labyrinth.can_move(new_coo)
-                    pygame.event.get()
-
-                    pygame.display.update()
-
-                elif (event.key == '97'):
-                    boucle = False
-                    break
-
-                else:
-                    pygame.event.get()
 
 
 
