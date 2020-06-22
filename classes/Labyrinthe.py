@@ -1,11 +1,10 @@
 import pygame
 from random                 import choice
 from pygame.locals          import *
-from 'settings/settings.py' import *
-from 'classes/Gardien'      import Gardien
-from 'classes/Objet'        import Objet
-from 'classes/McGyver'      import McGyver
-from 'classes/Labyrinthe'   import Labyrinthe
+from settings.settings import *
+from .Gardien      import Gardien
+from .Objet        import Objet
+from .McGyver      import McGyver
 
 class Labyrinthe:
     def __init__(self, file):
@@ -14,12 +13,14 @@ class Labyrinthe:
         self._launch_init()
         
     def _pygame_init(self):
-        self.screen = pygame.display.set_mode((HEIGHT, WIDTH))
+        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.grass = pygame.image.load(PATH).convert()
         self.wall = pygame.image.load(WALL).convert()
         self.gardienEnd = pygame.image.load(GARDIEN).convert()
         self.perso = pygame.image.load(MCGYVER).convert()
         self.obj = pygame.image.load(OBJECT_IMG).convert()
+        self.menu = pygame.image.load(MENU).convert()
+        self.bg = pygame.image.load(BACKGROUND).convert()
 
     def _set_attributes(self, file):
         self.file = file
@@ -34,11 +35,9 @@ class Labyrinthe:
         self.getPathList = self.getPathList()
         self.showLabyrinthe = self.showLabyrinthe()
 
-
-
     #
-    # Cette méthode permet de parse le fichier text du labyrinthe en dictionnaire de donnée
-    # représentant les positions de chaque cases sur des coordonnées X et Y et leur état
+    # This method allows to parse the text file of the labyrinth in data dictionary 
+    # representing the positions of each box on X and Y coordinates and their state
     #
     def parseFile (self):
         file = open(self.file, mode = 'r', encoding = 'utf-8-sig')
@@ -59,8 +58,8 @@ class Labyrinthe:
         return self.dic
 
     #
-    # Cette méthode parcour le dictionnaire et forme un tableau regroupant les coordonnée
-    # de toutes les cases chemin du labyrinthe
+    # This method goes through the dictionary and forms a table grouping the coordinates
+    # of all the boxes in the labyrinth path.
     #
     def getPathList (self) :
         pathList = []
@@ -70,22 +69,26 @@ class Labyrinthe:
         return pathList
 
     def showLabyrinthe (self):
+        self.screen.blit(self.bg, (0, 0))
+        pygame.display.update()
         for i in self.dic:
-            test =  tuple(j*IMG_SIZE for j in i)
+            convertedTuple =  tuple(j*IMG_SIZE for j in i)
             if self.dic[i] == 'chemin' or self.dic[i] == 'depart' or self.dic[i] == 'arrivee':
-                self.screen.blit(self.grass, test)
+                self.screen.blit(self.grass, convertedTuple)
                 if self.dic[i] == 'depart':
-                    self.screen.blit(self.perso, test)
+                    self.screen.blit(self.perso, convertedTuple)
                 if self.dic[i] == 'arrivee':
-                    self.screen.blit(self.gardienEnd, test)
+                    self.screen.blit(self.gardienEnd, convertedTuple)
             if self.dic[i] == 'mur':
-                self.screen.blit(self.wall, test)
+                self.screen.blit(self.wall, convertedTuple)
+        pygame.display.update()
+        return True
 
 
 
     #
-    # Cette méthode répartit aléatoirement, dans le labyrinthe, les objects en faisant attention
-    # de ne pas en placer deux dans la même case
+    # This method randomly distributes objects in the labyrinth,
+    # being careful not to place two in the same box
     #
     def objet_repartition(self):
         while range(len(self.objects)) != range(0,3):
@@ -97,7 +100,7 @@ class Labyrinthe:
                 self.screen.blit(self.obj, tuple(j*IMG_SIZE for j in path))
 
     #
-    # trouve les nouvelles coordonnées en fonction d'un déplacement (z, q, s, d)
+    # This method is about to find the new coordinates according to a displacement (z, q, s, d)
     #
     def find_new_coo(self, interaction):
         if interaction == 'LEFT':
@@ -111,7 +114,7 @@ class Labyrinthe:
 
         return None
     #
-    # methode 'manager' pour test et attribuer les nouvelles coordonnées
+    # 'manager' method for testing and assigning new coordinates
     #
     def can_move(self, new_coo):
         newFormattedCoo =  tuple(j*IMG_SIZE for j in new_coo)
@@ -124,7 +127,7 @@ class Labyrinthe:
                 self.objectsCount += 1
 
     #
-    # methode qui permet de déterminer si l'utilisateur a gagner le jeu ou non en arrivant sur l'arrivee
+    # Method to determine if the user has won the game or not when arriving on arrival
     #
     def finish_the_game(self):
         if self.dic[self.mcgyver.position] == 'arrivee' and self.objectsCount == 3:
@@ -134,4 +137,3 @@ class Labyrinthe:
             return True
 
         return False
-

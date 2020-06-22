@@ -8,5 +8,5 @@ MENU = 'image/menu.png'
 BACKGROUND = 'image/bg.png'
 IMG_SIZE = 20
 
-HEIGHT = 1000
-WIDTH = 1000
+HEIGHT = 700
+WIDTH = 800
