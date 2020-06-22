@@ -46,15 +46,15 @@ class Labyrinthe:
         for i in range(len(lines)):
             for j in range(len(lines[i])):
                 if lines[i][j] == 'c':
-                    self.dic.update({(i,j) : 'chemin'})
+                    self.dic.update({(i+15,j+10) : 'chemin'})
                 if lines[i][j] == 'm':
-                    self.dic.update({(i,j) : 'mur'})
+                    self.dic.update({(i+15,j+10) : 'mur'})
                 if lines[i][j] == 'D':
-                    self.dic.update({(i,j) : 'depart'})
-                    self.mcgyver = McGyver((i,j))
+                    self.dic.update({(i+15,j+10) : 'depart'})
+                    self.mcgyver = McGyver((i+15,j+10))
                 if lines[i][j] == 'A':
-                    self.dic.update({(i,j) : 'arrivee'})
-                    self.gardien = Gardien((i,j))
+                    self.dic.update({(i+15,j+10) : 'arrivee'})
+                    self.gardien = Gardien((i+15,j+10))
         return self.dic
 
     #
