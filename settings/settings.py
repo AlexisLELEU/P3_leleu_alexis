@@ -7,6 +7,5 @@ OBJECT_IMG = 'image/seringue.png'
 MENU = 'image/menu.png'
 BACKGROUND = 'image/bg.png'
 IMG_SIZE = 20
-
 HEIGHT = 700
 WIDTH = 800
