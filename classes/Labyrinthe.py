@@ -141,7 +141,7 @@ class Labyrinthe:
         if self.dic[self.McGyver.position] == 'arrivee' and self.objects_count != 3:
             print('----------------' +
             '\n'+
-            'VOUS AVEZ PERDU, vous n\'avez pas récolté tous les objets'+
+            'VOUS AVEZ PERDU, vous n\'avez pas recolte tous les objets'+
             '\n'+
             '----------------')
             return True
