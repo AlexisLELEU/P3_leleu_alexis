@@ -1,22 +1,22 @@
-import pygame
 from random                 import choice
+import pygame
 from pygame.locals          import *
-from settings.settings import *
-from .Gardien      import Gardien
-from .Objet        import Objet
-from .McGyver      import McGyver
+from settings.settings import WIDTH, HEIGHT, PATH, WALL, GARDIEN, MCGYVER, OBJECT_IMG, MENU, BACKGROUND, IMG_SIZE
+from .gardien      import Gardien
+from .objet        import Objet
+from .mcgyver     import McGyver
 
 class Labyrinthe:
     def __init__(self, file):
-        self._pygame_init()
         self._set_attributes(file)
+        self._pygame_init()
         self._launch_init()
-        
+
     def _pygame_init(self):
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.grass = pygame.image.load(PATH).convert()
         self.wall = pygame.image.load(WALL).convert()
-        self.gardienEnd = pygame.image.load(GARDIEN).convert()
+        self.gardien_end = pygame.image.load(GARDIEN).convert()
         self.perso = pygame.image.load(MCGYVER).convert()
         self.obj = pygame.image.load(OBJECT_IMG).convert()
         self.menu = pygame.image.load(MENU).convert()
@@ -25,62 +25,62 @@ class Labyrinthe:
     def _set_attributes(self, file):
         self.file = file
         self.dic = {}
-        self.mcgyver = ''
+        self.McGyver= ''
         self.gardien = ''
         self.objects = []
-        self.objectsCount = 0
+        self.objects_count = 0
 
     def _launch_init(self):
-        self.parseFile()
-        self.getPathList = self.getPathList()
-        self.showLabyrinthe = self.showLabyrinthe()
+        self.parse_file()
+        self.show_labyrinthe = self.show_labyrinthe()
+        self.get_path_list = self.get_path_list()
 
     #
-    # This method allows to parse the text file of the labyrinth in data dictionary 
+    # This method allows to parse the text file of the labyrinth in data dictionary
     # representing the positions of each box on X and Y coordinates and their state
     #
-    def parseFile (self):
-        file = open(self.file, mode = 'r', encoding = 'utf-8-sig')
+    def parse_file(self):
+        file = open(self.file, mode='r', encoding='utf-8-sig')
         lines = file.readlines()
         file.close()
         for i in range(len(lines)):
             for j in range(len(lines[i])):
                 if lines[i][j] == 'c':
-                    self.dic.update({(i+15,j+10) : 'chemin'})
+                    self.dic.update({(i+15, j+10) : 'chemin'})
                 if lines[i][j] == 'm':
-                    self.dic.update({(i+15,j+10) : 'mur'})
+                    self.dic.update({(i+15, j+10) : 'mur'})
                 if lines[i][j] == 'D':
-                    self.dic.update({(i+15,j+10) : 'depart'})
-                    self.mcgyver = McGyver((i+15,j+10))
+                    self.dic.update({(i+15, j+10) : 'depart'})
+                    self.McGyver= McGyver((i+15, j+10))
                 if lines[i][j] == 'A':
-                    self.dic.update({(i+15,j+10) : 'arrivee'})
-                    self.gardien = Gardien((i+15,j+10))
+                    self.dic.update({(i+15, j+10) : 'arrivee'})
+                    self.gardien = Gardien((i+15, j+10))
         return self.dic
 
     #
     # This method goes through the dictionary and forms a table grouping the coordinates
     # of all the boxes in the labyrinth path.
     #
-    def getPathList (self) :
-        pathList = []
+    def get_path_list(self):
+        path_list = []
         for i in self.dic:
             if self.dic[i] == 'chemin':
-                pathList.append(i)
-        return pathList
+                path_list.append(i)
+        return path_list
 
-    def showLabyrinthe (self):
+    def show_labyrinthe(self):
         self.screen.blit(self.bg, (0, 0))
         pygame.display.update()
         for i in self.dic:
-            convertedTuple =  tuple(j*IMG_SIZE for j in i)
+            converted_tuple = tuple(j*IMG_SIZE for j in i)
             if self.dic[i] == 'chemin' or self.dic[i] == 'depart' or self.dic[i] == 'arrivee':
-                self.screen.blit(self.grass, convertedTuple)
+                self.screen.blit(self.grass, converted_tuple)
                 if self.dic[i] == 'depart':
-                    self.screen.blit(self.perso, convertedTuple)
+                    self.screen.blit(self.perso, converted_tuple)
                 if self.dic[i] == 'arrivee':
-                    self.screen.blit(self.gardienEnd, convertedTuple)
+                    self.screen.blit(self.gardien_end, converted_tuple)
             if self.dic[i] == 'mur':
-                self.screen.blit(self.wall, convertedTuple)
+                self.screen.blit(self.wall, converted_tuple)
         pygame.display.update()
         return True
 
@@ -91,9 +91,9 @@ class Labyrinthe:
     # being careful not to place two in the same box
     #
     def objet_repartition(self):
-        while range(len(self.objects)) != range(0,3):
-            path = choice(self.getPathList)
-            if (path in self.objects):
+        while range(len(self.objects)) != range(0, 3):
+            path = choice(self.get_path_list)
+            if path in self.objects:
                 pass
             else:
                 self.objects.append(path)
@@ -104,36 +104,46 @@ class Labyrinthe:
     #
     def find_new_coo(self, interaction):
         if interaction == 'LEFT':
-            return (self.mcgyver.position[0] - 1, self.mcgyver.position[1])
+            return (self.McGyver.position[0] - 1, self.McGyver.position[1])
         if interaction == 'RIGHT':
-            return (self.mcgyver.position[0] + 1, self.mcgyver.position[1])
+            return (self.McGyver.position[0] + 1, self.McGyver.position[1])
         if interaction == 'DOWN':
-            return (self.mcgyver.position[0], self.mcgyver.position[1] + 1)
+            return (self.McGyver.position[0], self.McGyver.position[1] + 1)
         if interaction == 'UP':
-           return (self.mcgyver.position[0], self.mcgyver.position[1] - 1)
+            return (self.McGyver.position[0], self.McGyver.position[1] - 1)
 
         return None
     #
     # 'manager' method for testing and assigning new coordinates
     #
     def can_move(self, new_coo):
-        newFormattedCoo =  tuple(j*IMG_SIZE for j in new_coo)
-        lastCoo =  tuple(j*IMG_SIZE for j in self.mcgyver.position)
+        new_formatted_coo = tuple(j*IMG_SIZE for j in new_coo)
+        last_coo = tuple(j*IMG_SIZE for j in self.McGyver.position)
         if(new_coo in self.dic and (self.dic[new_coo] == 'chemin' or self.dic[new_coo] == 'arrivee')):
-            self.mcgyver.position = new_coo
-            self.screen.blit(self.perso, newFormattedCoo)
-            self.screen.blit(self.grass, lastCoo)
-            if(self.mcgyver.position in self.objects):
-                self.objectsCount += 1
+            self.McGyver.position = new_coo
+            self.screen.blit(self.perso, new_formatted_coo)
+            self.screen.blit(self.grass, last_coo)
+            if self.McGyver.position in self.objects:
+                self.objects_count += 1
 
     #
     # Method to determine if the user has won the game or not when arriving on arrival
     #
     def finish_the_game(self):
-        if self.dic[self.mcgyver.position] == 'arrivee' and self.objectsCount == 3:
-           return True
+        if self.dic[self.McGyver.position] == 'arrivee' and self.objects_count == 3:
+            print('----------------' +
+            '\n'+
+            'VOUS AVEZ GAGNE'+
+            '\n'+
+            '----------------')
+            return True
 
-        if self.dic[self.mcgyver.position] == 'arrivee'  and self.objectsCount != 3:
+        if self.dic[self.McGyver.position] == 'arrivee' and self.objects_count != 3:
+            print('----------------' +
+            '\n'+
+            'VOUS AVEZ PERDU, vous n\'avez pas récolté tous les objets'+
+            '\n'+
+            '----------------')
             return True
 
         return False

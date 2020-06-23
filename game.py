@@ -1,4 +1,4 @@
-from classes.Labyrinthe    import Labyrinthe
+from classes.labyrinthe    import Labyrinthe
 from settings.settings     import *
 from pygame.locals          import *
 import pygame
@@ -10,7 +10,7 @@ if "__main__" == __name__:
     pygame.font.init()
     
     labyrinth = Labyrinthe(LABYRINTHE_PATH)
-    parselabyrinth = labyrinth.parseFile
+    parselabyrinth = labyrinth.parse_file
 
     labyrinth.objet_repartition()
 
@@ -20,7 +20,7 @@ if "__main__" == __name__:
 
 
     while boucle:
-        labyrinth.showLabyrinthe
+        labyrinth.show_labyrinthe
 
         for event in pygame.event.get():
             if(event.type == pygame.KEYDOWN):
@@ -40,7 +40,7 @@ if "__main__" == __name__:
                 
                     labyrinth.can_move(new_coo)
 
-                    labyrinth.showLabyrinthe
+                    labyrinth.show_labyrinthe
                     pygame.display.flip()
 
                 elif (event.key == pygame.K_ESCAPE):
