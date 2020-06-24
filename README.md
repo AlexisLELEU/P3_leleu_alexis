@@ -10,6 +10,11 @@
 - virtualenv
 - pygame
 
+Pour installer tous les pré-requis lancer la commande:
+```bash
+pip install -r settings/requirements.txt
+```
+
 ## Paramétrage
 
 Clonner le projet:
