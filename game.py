@@ -14,10 +14,7 @@ if "__main__" == __name__:
 
     labyrinth.objet_repartition()
 
-
     boucle = True
-    start = False
-
 
     while boucle:
         labyrinth.show_labyrinthe
@@ -44,6 +41,7 @@ if "__main__" == __name__:
                     pygame.display.flip()
 
                 elif (event.key == pygame.K_ESCAPE):
+                    boucle = False
                     break
 
 
